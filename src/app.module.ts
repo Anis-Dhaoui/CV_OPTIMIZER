@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './AUTH/auth.module';
 
 @Module({
   imports: [
@@ -25,8 +27,8 @@ import { join } from 'path';
     // RightsModule,
     // GroupModule,
     // ProgramModule,
-    // UserModule,
-    // AuthModule
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
