@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { IProgram } from "../program/entities/program.entity";
+import { IResume } from "src/resume/entities/resume.entity";
 
 export class IUser extends Document {
     readonly username: string;
@@ -7,5 +7,5 @@ export class IUser extends Document {
     readonly fullName: string;
     readonly email: string;
     readonly mobile: number;
-    readonly program: IProgram;
+    readonly resumes: IResume[];
 }

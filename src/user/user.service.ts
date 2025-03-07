@@ -17,6 +17,7 @@ export class UserService {
 
 
 
+
   async findOne(id: Types.ObjectId): Promise<IUser> {
     const user = await this.userModel.aggregate([
       {
@@ -24,10 +25,10 @@ export class UserService {
       },
       {
         $lookup: {
-          from: 'programs',
-          localField: 'program',
+          from: 'resumes',
+          localField: 'resume',
           foreignField: '_id',
-          as: 'program'
+          as: 'resume'
         }
       },
       {
@@ -47,6 +48,10 @@ export class UserService {
     }
     return user[0];
   }
+
+
+
+
 
 
 

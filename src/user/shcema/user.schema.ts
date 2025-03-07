@@ -1,8 +1,8 @@
+import { ResumeSchema } from './../../resume/schema/resume.schema';
 import { InjectModel, Prop, Schema, SchemaFactory, } from "@nestjs/mongoose"
 import * as mongoose from 'mongoose';
 import { Schema as MongooseSchema, Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { Program } from "../program/schema/program.schema";
 
 @Schema()
 export class User {
@@ -25,10 +25,12 @@ export class User {
 
 
 
+    // @Prop({ type: [{ type: Types.ObjectId, ref: 'Resume' }], default: [] })  
+    // resumes: Types.ObjectId[]; // Array of Resume _id references
 
     // // An array of references to the 'Program' model
-    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Program' }] })
-    program: Program[];
+    @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Resume' }] })
+    resumes: typeof ResumeSchema[];
 }
 export const UserSchema = SchemaFactory.createForClass(User);
 

@@ -1,5 +1,5 @@
 import { IsEmail, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
-import { IProgram } from "../program/entities/program.entity";
+import { IResume } from "src/resume/entities/resume.entity";
 
 
 export class CreateUserDto {
@@ -31,5 +31,5 @@ export class CreateUserDto {
     readonly mobile: number;
 
     // @IsNotEmpty()
-    readonly program?: IProgram;
+    readonly resumes?: IResume[];
 }

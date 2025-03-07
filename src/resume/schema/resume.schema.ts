@@ -1,44 +1,109 @@
-import { Schema } from 'mongoose';
-import { IResume } from '../entities/resume.entity';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export const ResumeSchema = new Schema<IResume>({
-    personal_information: {
-      name: { type: String},
-      title: { type: String},
-      address: { type: String},
-      linkedin: { type: String},
-      phone: { type: String},
-      github: { type: String},
-      email: { type: String},
-      portfolio: { type: String},
-    },
-    summary: { type: String},
-    skills: {
-      soft: { type: [String]},
-      hard: { type: [String]},
-    },
-    professional_experience: [
-      {
-        title: { type: String},
-        employer: { type: String},
-        location: { type: String},
-        dates: { type: String},
-        responsibilities: { type: [String]},
-      },
-    ],
-    education: [
-      {
-        degree: { type: String},
-        institution: { type: String},
-        location: { type: String},
-        dates: { type: String},
-        details: { type: [String], default: [] },
-      },
-    ],
-    languages: [
-      {
-        language: { type: String},
-        proficiency: { type: String},
-      },
-    ],
-  });
+// Personal Information Schema
+class PersonalInformation {
+  @Prop({ required: true })
+  name: string;
+
+  @Prop()
+  title: string;
+
+  @Prop()
+  address: string;
+
+  @Prop()
+  linkedin: string;
+
+  @Prop()
+  phone: string;
+
+  @Prop()
+  github: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  portfolio: string;
+}
+
+// Skills Schema
+class Skills {
+  @Prop({ type: [String] })
+  soft: string[];
+
+  @Prop({ type: [String] })
+  hard: string[];
+}
+
+// Professional Experience Schema
+class ProfessionalExperience {
+  @Prop()
+  title: string;
+
+  @Prop()
+  employer: string;
+
+  @Prop()
+  location: string;
+
+  @Prop()
+  dates: string;
+
+  @Prop({ type: [String] })
+  responsibilities: string[];
+}
+
+// Education Schema
+class Education {
+  @Prop()
+  degree: string;
+
+  @Prop()
+  institution: string;
+
+  @Prop()
+  location: string;
+
+  @Prop()
+  dates: string;
+
+  @Prop({ type: [String], default: [] })
+  details: string[];
+}
+
+// Languages Schema
+class Language {
+  @Prop()
+  language: string;
+
+  @Prop()
+  proficiency: string;
+}
+
+@Schema()
+export class Resume extends Document {
+  @Prop({ type: PersonalInformation, required: true })
+  personal_information: PersonalInformation;
+
+  @Prop({ type: String })
+  summary: string;
+
+  @Prop({ type: Skills })
+  skills: Skills;
+
+  @Prop({ type: [ProfessionalExperience] })
+  professional_experience: ProfessionalExperience[];
+
+  @Prop({ type: [Education] })
+  education: Education[];
+
+  @Prop({ type: [Language] })
+  languages: Language[];
+
+  @Prop({ required: true })  
+  userId: string; // Store user ID for reference
+}
+
+export const ResumeSchema = SchemaFactory.createForClass(Resume);
