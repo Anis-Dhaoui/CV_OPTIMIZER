@@ -25,7 +25,7 @@ export class ResumeController {
         destination: './uploads',
         filename: (req, file, callback) => {
           const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-          const filename = `${uniqueSuffix}.pdf`; // Force .pdf extension
+          const filename = `${uniqueSuffix}.pdf`;
           callback(null, filename);
         }
       })
