@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, ObjectId } from 'mongoose';
 
 export interface IResume extends Document {
   personal_information: {
@@ -34,4 +34,7 @@ export interface IResume extends Document {
     language: string;
     proficiency: string;
   }[];
+
+  userId: ObjectId;
+  label: string;
 }

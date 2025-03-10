@@ -82,6 +82,12 @@ class Language {
   proficiency: string;
 }
 
+
+
+
+
+
+
 @Schema()
 export class Resume extends Document {
   @Prop({ type: PersonalInformation, required: true })
@@ -104,6 +110,16 @@ export class Resume extends Document {
 
   @Prop({ required: true })  
   userId: string; // Store user ID for reference
+  @Prop({unique: true})
+  label: string
 }
 
 export const ResumeSchema = SchemaFactory.createForClass(Resume);
+
+
+ResumeSchema.pre('save', function (next) {
+  if (!this.label) {
+    this.label = this.personal_information.title + "-" + this._id.toString().slice(-3);
+  }
+  next();
+});

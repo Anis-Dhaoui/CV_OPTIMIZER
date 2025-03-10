@@ -105,8 +105,12 @@ export class ResumeService {
 
       const parsedData = JSON.parse(res);
       parsedData.userId = userId;
+      // parsedData.label = parsedData.personal_information.title + parsedData._id;
+      // console.log(parsedData)
+      // console.log(parsedData.personal_information.title + parsedData._id)
+
       const resume = await new this.resumeModel(parsedData).save();
-      console.log(resume)
+      // console.log(resume)
 
       // 2. Add resume _id to the user's resumes array
       await this.userModel.findByIdAndUpdate(

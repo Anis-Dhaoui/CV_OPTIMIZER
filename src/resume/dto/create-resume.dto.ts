@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import mongoose from 'mongoose';
 
 class PersonalInformationDto {
   @IsString()
@@ -34,11 +35,11 @@ class PersonalInformationDto {
 class SkillsDto {
   @IsArray()
   @IsString({ each: true })
-  general: string[];
+  soft: string[];
 
   @IsArray()
   @IsString({ each: true })
-  technical: string[];
+  hard: string[];
 }
 
 class ExperienceDto {
@@ -46,7 +47,7 @@ class ExperienceDto {
   title: string;
 
   @IsString()
-  company: string;
+  employer: string;
 
   @IsString()
   location: string;
@@ -119,5 +120,8 @@ export class CreateResumeDto {
   @ValidateNested({ each: true })
   @Type(() => LanguageDto)
   languages: LanguageDto[];
+  
+  @IsString()
+  label: string;
 }
 
