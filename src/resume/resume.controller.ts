@@ -21,7 +21,14 @@ export class ResumeController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({ destination: './uploads' })
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+          const filename = `${uniqueSuffix}.pdf`; // Force .pdf extension
+          callback(null, filename);
+        }
+      })
     })
   )
 
