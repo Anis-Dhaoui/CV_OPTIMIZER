@@ -1,4 +1,4 @@
-import { Controller, Post, UploadedFile, UseGuards, UseInterceptors, Req } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseGuards, UseInterceptors, Req, Get, Res, Param, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ResumeService } from './resume.service';
 import { diskStorage } from 'multer';
@@ -43,5 +43,17 @@ export class ResumeController {
     const parsedData = await this.resumeService.parseResume(file.path, req.user._id);
     // console.log(parsedData)
     return parsedData;
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Get('analyze/:label')
+  async analyze(@Req() req, @Res() res, @Param('label') label: string) {
+    try {
+        const fetchedResume = await this.resumeService.anylizeResume(label, req.user._id);
+        return res.status(HttpStatus.OK).json(fetchedResume)
+    } catch (error) {
+      return res.status(error.status).json(error.response);
+    }
   }
 }
