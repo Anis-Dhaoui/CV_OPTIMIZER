@@ -97,16 +97,18 @@ export class ResumeService {
         messages: [
           {
             role: 'system',
-            content: `Extract structured resume data and strictly follow this JSON format: ${JSON.stringify(this.getJsonFormat(), null, 2)}. 
+            content: `Extract structured and organized resume data and strictly follow this JSON format: ${JSON.stringify(this.getJsonFormat(), null, 2)}. 
                       If links given as **text links** (e.g., "GitHub", "LinkedIn") without URLs, find their corresponding URLs.
-                      Ensure that all detected links are included, even if they appear as plain text or at the end of the document.`
+                      Ensure that all detected links are included, even if they appear as plain text or at the end of the document.
+                      Maintain the **exact order** of experiences as they appear in the given text.
+                      Do not rearrange or sort by relevance. Preserve chronology and input sequence.`
           },
           {
             role: 'user',
             content: `Extract structured JSON data from this resume:\n${text}`
           },
         ],
-        temperature: 0.2,
+        temperature: 0.5,
       });
 
       const res = response.choices[0]?.message?.content.replace(/^```json\n/, '').replace(/\n```$/, '');
@@ -161,8 +163,7 @@ export class ResumeService {
     ];
 
     requiredSections.forEach(section => {
-      if (!resume[section as keyof IResume] ||
-        (section === 'skills' && resume.skills.hard.length === 0)) {
+      if (!resume[section as keyof IResume] || (section === 'skills' && resume.skills.hard.length === 0)) {
         report.missingSections.push(section);
         deduct(10, `Missing or empty section: ${section}`);
       }
@@ -179,30 +180,31 @@ export class ResumeService {
       }
     });
 
-    const atsDateFormat = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} [–-] ((Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}|Present)$/i;
     // 3. Professional Experience Validation (25%)
+    const atsDateFormat = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} [–-] ((Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}|Present)$/i;
+
     resume.professional_experience.forEach((exp, index) => {
       if (!exp.title.trim()) {
         deduct(2, `Missing job title in position ${index + 1}`);
       }
 
       if (!exp.dates.match(atsDateFormat)) {
-        deduct(3, `Invalid date format in position ${index + 1} on ${exp.title}`, `Use 'MM/YYYY - MM/YYYY' or similar ATS-friendly formats on ${exp.title}`);
+        deduct(3, `Invalid date format in position ${index + 1} on ${exp.title.toUpperCase()}`, `Use 'MM/YYYY - MM/YYYY' or similar ATS-friendly formats on ${exp.title.toUpperCase()}`);
       }
 
       if (exp.responsibilities.length < 3) {
-        deduct(2, `Insufficient responsibilities in position ${index + 1} on ${exp.title}`, `Add at least 3 bullet points on ${exp.title}`);
+        deduct(2, `Insufficient responsibilities in position ${index + 1} on ${exp.title.toUpperCase()}`, `Add at least 3 bullet points on ${exp.title.toUpperCase()}`);
       }
     });
 
     // 4. Education Validation (15%)
     resume.education.forEach(edu => {
-      // if (!edu.degree.match(/BSc|BA|MSc|PhD/i)) {
-      //   deduct(3, `Unclear degree title: ${edu.degree}`, "Use standard degree names");
-      // }
+      if (!edu.degree.match(/BSc|BA|MSc|PhD/i)) {
+        deduct(3, `Unclear degree title: ${edu.degree}`, "Use standard degree names");
+      }
 
       if (!edu.dates.match(atsDateFormat)) {
-        deduct(2, `Invalid education dates: ${edu.dates} on ${edu.degree}`, `Use 'MMM YYYY – MMM YYYY' or 'MMM YYYY – Present' format on ${edu.degree}`);
+        deduct(2, `Invalid education dates: ${edu.dates} on ${edu.degree.toUpperCase()}`, `Use 'MMM YYYY – MMM YYYY' or 'MMM YYYY – Present' format on ${edu.degree.toUpperCase()}`);
       }
     });
 
@@ -221,37 +223,6 @@ export class ResumeService {
 
     return report;
   }
-
-  //   private calculateATSScore(resume: any): number {
-  //     let score = 100;
-
-  //     // Define required sections and their score impact
-  //     const sectionWeights = {
-  //         professional_experience: 30,
-  //         skills: 20,
-  //         education: 20,
-  //         summary: 10,
-  //         // projects: 10,
-  //         // certifications: 10
-  //     };
-
-  //     let checkResult: any[];
-
-  //     // Check if key sections exist
-  //     for (const [section, weight] of Object.entries(sectionWeights)) {
-  //       console.log(section)
-  //       console.log(weight)
-  //         if (!resume[section] || (Array.isArray(resume[section]) && resume[section].length === 0)) {
-  //             score -= weight;
-  //         }
-  //     }
-
-  //     // Word count validation (Minimum threshold: 500 words)
-  //     // const totalWords = JSON.stringify(resume).split(/\s+/).length;
-  //     // if (totalWords < 500) score -= 20;
-
-  //     return Math.max(0, Math.min(score, 100)); // Keep score within 0-100 range
-  // }
 
 
   async anylizeResume(label: string, userId: string): Promise<any> {
